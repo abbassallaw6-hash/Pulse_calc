@@ -1,0 +1,13 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="115" fill="#101114"/>
+  <rect x="35" y="35" width="442" height="442" rx="95" fill="#202228"/>
+  <path d="M90 270 H170 L215 165 L285 350 L330 245 H420"
+        fill="none" stroke="#FF9638" stroke-width="25"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="420" cy="245" r="15" fill="#FF9638"/>
+  <text x="256" y="420" text-anchor="middle"
+        font-family="Arial" font-size="45"
+        font-weight="bold" fill="white">PULSE</text>
+</svg>
+

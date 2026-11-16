@@ -1,0 +1,229 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101114">
+<title>PULSE CALC</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#101114;color:white;
+ font-family:Arial,sans-serif;min-height:100vh;
+ display:flex;justify-content:center;
+}
+.app{width:100%;max-width:480px;padding:22px 18px 25px}
+header{display:flex;justify-content:space-between;align-items:center}
+.brand{font-size:19px;font-weight:900;letter-spacing:3px}
+.sub{font-size:9px;letter-spacing:3px;color:#999;margin-top:5px}
+.icon{background:#24262c;color:white;border:0;border-radius:14px;padding:12px;font-size:18px}
+.display{
+ height:230px;display:flex;flex-direction:column;
+ justify-content:flex-end;align-items:flex-end;
+ padding:15px 5px;overflow:hidden;
+}
+.expression{color:#999;font-size:25px;min-height:38px;max-width:100%;overflow-x:auto}
+.result{font-size:55px;font-weight:300;margin-top:15px;max-width:100%;overflow-x:auto}
+.tools{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;color:#999;font-size:12px}
+.tools button{background:none;border:0;color:#ff9638;font-size:14px;padding:10px}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.key{
+ height:70px;border:0;border-radius:22px;
+ background:#202228;color:white;font-size:23px;
+ font-weight:600;box-shadow:0 3px 8px #0003;
+}
+.key:active{transform:scale(.96);background:#383b43}
+.op{background:#ff9638;color:#111}
+.special{background:#30333b;color:#ff9638}
+.science{display:none;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:10px}
+.science.show{display:grid}
+.science button{height:48px;border-radius:16px}
+footer{text-align:center;margin-top:28px;color:#777;font-size:10px;letter-spacing:3px}
+footer b{color:#ff9638}
+.panel{
+ display:none;position:fixed;inset:0;background:#000b;
+ align-items:flex-end;justify-content:center;
+}
+.panel.show{display:flex}
+.sheet{background:#202228;width:100%;max-width:480px;
+ max-height:70vh;overflow:auto;padding:22px;border-radius:25px 25px 0 0}
+.sheet h2{margin-top:0}
+.item{padding:13px 0;border-bottom:1px solid #444;color:#ddd}
+.clear{background:#ff9638;border:0;padding:12px 20px;border-radius:12px}
+.light{background:#f2f3f5;color:#17191e}
+.light .key{background:#fff;color:#17191e}
+.light .special{background:#e1e3e8;color:#e88b32}
+.light .op{background:#ff9638;color:#111}
+.light .icon{background:#e1e3e8;color:#17191e}
+.light .display .expression{color:#777}
+.light .tools{color:#777}
+.light .sheet{background:#fff;color:#17191e}
+.light .item{color:#333}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div>
+  <div class="brand">PULSE CALC</div>
+  <div class="sub">BY DESIGNE PULSE</div>
+ </div>
+ <div>
+  <button class="icon" onclick="showHistory()">◷</button>
+  <button class="icon" onclick="toggleTheme()">◐</button>
+ </div>
+</header>
+
+<section class="display">
+ <div class="expression" id="expression">0</div>
+ <div class="result" id="result">0</div>
+</section>
+
+<div class="tools">
+ <button onclick="toggleScience()">ƒx SCIENTIFIC</button>
+ <span>PRECISION • SIMPLE</span>
+</div>
+
+<div class="science" id="science">
+ <button class="key special" onclick="func('sin')">sin</button>
+ <button class="key special" onclick="func('cos')">cos</button>
+ <button class="key special" onclick="func('tan')">tan</button>
+ <button class="key special" onclick="func('sqrt')">√</button>
+ <button class="key special" onclick="func('log')">log</button>
+ <button class="key special" onclick="func('ln')">ln</button>
+ <button class="key special" onclick="add('π')">π</button>
+ <button class="key special" onclick="add('^')">xʸ</button>
+</div>
+
+<div class="keys">
+ <button class="key special" onclick="clearAll()">AC</button>
+ <button class="key special" onclick="backspace()">⌫</button>
+ <button class="key special" onclick="add('%')">%</button>
+ <button class="key op" onclick="add('÷')">÷</button>
+
+ <button class="key" onclick="add('7')">7</button>
+ <button class="key" onclick="add('8')">8</button>
+ <button class="key" onclick="add('9')">9</button>
+ <button class="key op" onclick="add('×')">×</button>
+
+ <button class="key" onclick="add('4')">4</button>
+ <button class="key" onclick="add('5')">5</button>
+ <button class="key" onclick="add('6')">6</button>
+ <button class="key op" onclick="add('−')">−</button>
+
+ <button class="key" onclick="add('1')">1</button>
+ <button class="key" onclick="add('2')">2</button>
+ <button class="key" onclick="add('3')">3</button>
+ <button class="key op" onclick="add('+')">+</button>
+
+ <button class="key" onclick="add('(')">(</button>
+ <button class="key" onclick="add('0')">0</button>
+ <button class="key" onclick="add('.')">.</button>
+ <button class="key op" onclick="calculate()">=</button>
+</div>
+
+<footer>PULSE <b>♥</b> CALC<br><br>DESIGNED BY ABBASS ALLAW</footer>
+</div>
+
+<div class="panel" id="historyPanel" onclick="closeHistory(event)">
+ <div class="sheet">
+  <h2>Calculation History</h2>
+  <div id="historyList"></div>
+  <br>
+  <button class="clear" onclick="clearHistory()">Clear History</button>
+  <button class="icon" onclick="hideHistory()">Close</button>
+ </div>
+</div>
+
+<script>
+let exp='';
+let history=JSON.parse(localStorage.getItem('pulseHistory')||'[]');
+
+function update(){
+ document.getElementById('expression').textContent=exp||'0';
+ try{
+  let v=evalExp(exp);
+  document.getElementById('result').textContent=
+   v===null?'0':format(v);
+ }catch(e){}
+}
+function add(x){
+ exp+=x;update();
+}
+function clearAll(){
+ exp='';document.getElementById('result').textContent='0';update();
+}
+function backspace(){exp=exp.slice(0,-1);update()}
+function format(n){
+ if(!Number.isFinite(n))return 'Error';
+ return Number(n.toPrecision(11)).toString();
+}
+function evalExp(s){
+ if(!s)return 0;
+ s=s.replace(/×/g,'*').replace(/÷/g,'/')
+ .replace(/−/g,'-').replace(/π/g,'Math.PI')
+ .replace(/\^/g,'**').replace(/%/g,'/100');
+ if(!/^[0-9+\-*/().\s*MathPI]+$/.test(s))return null;
+ return Function('"use strict";return ('+s+')')();
+}
+function calculate(){
+ try{
+  let value=evalExp(exp);
+  if(value===null||!Number.isFinite(value))throw Error();
+  let answer=format(value);
+  history.unshift(exp+' = '+answer);
+  history=history.slice(0,50);
+  localStorage.setItem('pulseHistory',JSON.stringify(history));
+  exp=answer;update();
+ }catch(e){
+  document.getElementById('result').textContent='Error';
+ }
+}
+function func(name){
+ if(!exp)return;
+ try{
+  let n=evalExp(exp),v;
+  if(name==='sin')v=Math.sin(n*Math.PI/180);
+  if(name==='cos')v=Math.cos(n*Math.PI/180);
+  if(name==='tan')v=Math.tan(n*Math.PI/180);
+  if(name==='sqrt')v=Math.sqrt(n);
+  if(name==='log')v=Math.log10(n);
+  if(name==='ln')v=Math.log(n);
+  if(!Number.isFinite(v))throw Error();
+  exp=format(v);update();
+ }catch(e){
+  document.getElementById('result').textContent='Error';
+ }
+}
+function toggleScience(){
+ document.getElementById('science').classList.toggle('show');
+}
+function toggleTheme(){document.body.classList.toggle('light')}
+function showHistory(){
+ let list=document.getElementById('historyList');
+ list.innerHTML=history.length?
+ history.map(x=>'<div class="item">'+escapeHTML(x)+'</div>').join(''):
+ '<p>No calculations yet</p>';
+ document.getElementById('historyPanel').classList.add('show');
+}
+function escapeHTML(s){
+ return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function hideHistory(){document.getElementById('historyPanel').classList.remove('show')}
+function closeHistory(e){if(e.target.id==='historyPanel')hideHistory()}
+function clearHistory(){
+ history=[];localStorage.setItem('pulseHistory','[]');showHistory();
+}
+document.addEventListener('keydown',e=>{
+ if(/[0-9.()+*/%]/.test(e.key)&&e.key.length===1)add(e.key);
+ if(e.key==='Enter')calculate();
+ if(e.key==='Backspace')backspace();
+ if(e.key==='Escape')clearAll();
+});
+update();
+</script>
+</body>
+</html>
+
