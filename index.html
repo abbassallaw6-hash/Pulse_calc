@@ -238,7 +238,15 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js")
+      .then(() => console.log("PULSE CALC Offline Ready!"))
+      .catch(error => console.error(error));
+  });
+}
+</script>
 </body>
 </html>
 
